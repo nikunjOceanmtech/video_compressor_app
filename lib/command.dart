@@ -9,10 +9,7 @@ Future<void> compressVideo(String inputPath) async {
     DateTime dateTime = DateTime.now();
     var dir = await getTemporaryDirectory();
     String outputPath = "${dir.path}/${DateTime.now().microsecondsSinceEpoch}.mp4";
-    // var command = '-i $inputPath -vcodec libx264 -crf 35 -preset ultrafast -tune fastdecode -y $outputPath';
-    // var command = '-i $inputPath -vcodec mpeg4 -crf 40 -preset ultrafast -tune fastdecode -y $outputPath';
-    var command = '-i $inputPath -vcodec libx264 -preset ultrafast -crf 35 -tune zerolatency -y $outputPath'; // new
-    // var command = '-i $inputPath -vcodec libx264 -preset ultrafast -crf 45 -tune zerolatency -y $outputPath';
+    var command = '-i $inputPath -vcodec libx264 -preset superfast -crf 10 -tune zerolatency -y $outputPath';
     var session = await FFmpegKit.execute(command);
     var returnCode = await session.getReturnCode();
 
@@ -24,6 +21,9 @@ Future<void> compressVideo(String inputPath) async {
     } else {
       print("=================== ${DateTime.now().difference(dateTime)}");
       print('Compression failed with code $returnCode');
+      for (var e in await session.getAllLogs()) {
+        print("==============${e.getMessage()}");
+      }
       await session.cancel();
     }
   } catch (e) {
